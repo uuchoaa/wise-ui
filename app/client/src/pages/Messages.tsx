@@ -1,0 +1,260 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import {
+  Search,
+  MessageCircle,
+  AlertCircle,
+  Clock,
+  CheckCircle2,
+  ChevronRight,
+  X,
+} from "lucide-react";
+
+interface Message {
+  id: number;
+  sender: "buyer" | "me";
+  text: string;
+  timestamp: string;
+}
+
+interface Conversation {
+  id: number;
+  buyerName: string;
+  buyerInitials: string;
+  buyerColor: string;
+  itemTitle: string;
+  status: "unanswered" | "active" | "pickup_pending" | "archived";
+  lastMessage: string;
+  lastMessageTime: string;
+  messages: Message[];
+  inconsistencyNote?: string;
+}
+
+const mockConversations: Conversation[] = [
+  {
+    id: 1,
+    buyerName: "João Silva",
+    buyerInitials: "JS",
+    buyerColor: "bg-blue-500",
+    itemTitle: "Sofá Cinza",
+    status: "active",
+    lastMessage: "Posso vir buscar amanhã?",
+    lastMessageTime: "agora",
+    messages: [
+      { id: 1, sender: "buyer", text: "Oi, o sofá ainda está disponível?", timestamp: "10:30" },
+      { id: 2, sender: "me", text: "Sim! Está em perfeito estado.", timestamp: "10:35" },
+      { id: 3, sender: "buyer", text: "Qual é o preço final?", timestamp: "10:40" },
+      { id: 4, sender: "me", text: "R$ 850. Aceito ofertas.", timestamp: "10:42" },
+      { id: 5, sender: "buyer", text: "Posso vir buscar amanhã?", timestamp: "agora" },
+    ],
+  },
+  {
+    id: 2,
+    buyerName: "Maria Santos",
+    buyerInitials: "MS",
+    buyerColor: "bg-green-500",
+    itemTitle: "Guarda-roupa",
+    status: "pickup_pending",
+    lastMessage: "Confirmado para sábado às 14h",
+    lastMessageTime: "há 2 horas",
+    messages: [
+      { id: 1, sender: "buyer", text: "Tenho interesse no guarda-roupa", timestamp: "ontem" },
+      { id: 2, sender: "me", text: "Ótimo! Está disponível.", timestamp: "ontem" },
+      { id: 3, sender: "buyer", text: "Posso vir sábado?", timestamp: "há 3 horas" },
+      { id: 4, sender: "me", text: "Sim, qual horário?", timestamp: "há 2 horas" },
+      { id: 5, sender: "buyer", text: "Confirmado para sábado às 14h", timestamp: "há 2 horas" },
+    ],
+    inconsistencyNote: "Disse sábado, depois mencionou domingo",
+  },
+  {
+    id: 3,
+    buyerName: "Pedro Costa",
+    buyerInitials: "PC",
+    buyerColor: "bg-purple-500",
+    itemTitle: "Mesa de Café",
+    status: "unanswered",
+    lastMessage: "Qual é a altura da mesa?",
+    lastMessageTime: "há 1 hora",
+    messages: [
+      { id: 1, sender: "buyer", text: "Qual é a altura da mesa?", timestamp: "há 1 hora" },
+    ],
+  },
+];
+
+const statusConfig = {
+  unanswered: {
+    label: "Sem resposta",
+    icon: <AlertCircle size={16} />,
+    color: "text-destructive",
+  },
+  active: {
+    label: "Ativo",
+    icon: <MessageCircle size={16} />,
+    color: "text-accent",
+  },
+  pickup_pending: {
+    label: "Retirada pendente",
+    icon: <Clock size={16} />,
+    color: "text-muted-foreground",
+  },
+  archived: {
+    label: "Arquivado",
+    icon: <CheckCircle2 size={16} />,
+    color: "text-muted-foreground",
+  },
+};
+
+export default function Messages() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(
+    mockConversations[0]
+  );
+  const [conversations, setConversations] = useState(mockConversations);
+
+  const filtered = conversations.filter(
+    (conv) =>
+      conv.buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      conv.itemTitle.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {/* Conversation List */}
+      <div className="w-80 border-r border-border flex flex-col">
+        {/* Header */}
+        <div className="border-b border-border px-4 py-4">
+          <h1 className="text-sm font-semibold text-foreground mb-3">Mensagens</h1>
+          <div className="relative">
+            <Search size={14} className="absolute left-2.5 top-2.5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Buscar conversa..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-7 h-8 text-xs border-b border-border bg-background focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
+        </div>
+
+        {/* Conversation List */}
+        <div className="flex-1 overflow-auto">
+          {filtered.map((conv) => {
+            const config = statusConfig[conv.status];
+            const isSelected = selectedConversation?.id === conv.id;
+
+            return (
+              <button
+                key={conv.id}
+                onClick={() => setSelectedConversation(conv)}
+                className={`w-full text-left border-b border-border px-4 py-3 ${
+                  isSelected ? "bg-secondary" : ""
+                }`}
+              >
+                {/* Buyer Avatar + Name */}
+                <div className="flex items-center gap-3 mb-2">
+                  <div className={`w-8 h-8 rounded-full ${conv.buyerColor} flex items-center justify-center text-xs font-semibold text-white flex-shrink-0`}>
+                    {conv.buyerInitials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-foreground truncate">{conv.buyerName}</p>
+                    <p className="text-xs text-muted-foreground truncate">{conv.itemTitle}</p>
+                  </div>
+                  <div className={`flex-shrink-0 ${config.color}`}>{config.icon}</div>
+                </div>
+
+                {/* Last Message */}
+                <p className="text-xs text-muted-foreground truncate mb-1">{conv.lastMessage}</p>
+                <p className="text-xs text-muted-foreground">{conv.lastMessageTime}</p>
+
+                {/* Inconsistency Note */}
+                {conv.inconsistencyNote && (
+                  <div className="mt-2 flex items-start gap-1.5 p-1.5 bg-destructive/10 border border-destructive/20 rounded-sm">
+                    <AlertCircle size={12} className="text-destructive flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-destructive">{conv.inconsistencyNote}</p>
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Conversation View */}
+      {selectedConversation ? (
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <div className="border-b border-border px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full ${selectedConversation.buyerColor} flex items-center justify-center text-sm font-semibold text-white`}>
+                {selectedConversation.buyerInitials}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">{selectedConversation.buyerName}</p>
+                <p className="text-xs text-muted-foreground">{selectedConversation.itemTitle}</p>
+              </div>
+            </div>
+
+            {/* Status Badge */}
+            <div className={`flex items-center gap-1.5 text-xs ${statusConfig[selectedConversation.status].color}`}>
+              {statusConfig[selectedConversation.status].icon}
+              <span>{statusConfig[selectedConversation.status].label}</span>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-auto px-6 py-4 space-y-3">
+            {selectedConversation.messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-xs px-3 py-2 rounded-sm text-xs ${
+                    msg.sender === "me"
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-secondary text-foreground border border-border"
+                  }`}
+                >
+                  <p>{msg.text}</p>
+                  <p className={`text-xs mt-1 ${msg.sender === "me" ? "text-accent-foreground/70" : "text-muted-foreground"}`}>
+                    {msg.timestamp}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Input Area */}
+          <div className="border-t border-border px-6 py-4 space-y-2">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Escrever mensagem..."
+                className="flex-1 text-xs border border-border rounded-sm px-3 py-2"
+              />
+              <Button variant="primary">
+                Enviar
+              </Button>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex gap-2">
+              <Button className="flex-1">
+                Agendar retirada
+              </Button>
+              <Button className="flex-1">
+                Arquivar
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <p className="text-sm">Selecione uma conversa para começar</p>
+        </div>
+      )}
+    </div>
+  );
+}
