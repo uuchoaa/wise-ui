@@ -11,15 +11,15 @@ import {
   Card,
   DescriptionList,
   DescriptionListItem,
-  OverflowMenu,
-  OverflowMenuItem,
+  Menu,
+  MenuItem,
 } from 'wise-ui'
-import { PlusSmallIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusSmallIcon } from '@heroicons/vue/20/solid'
 
 type NavItem = { label: string; to: string; current?: boolean }
 type RangeTab = { label: string; value: string; current?: boolean }
 
-type Tone = 'positive' | 'negative' | 'neutral'
+type Tone = 'positive' | 'negative' | 'neutral' | 'accent'
 type Stat = { label: string; value: string; delta: string; tone: Tone }
 
 type ActivityStatus = 'paid' | 'overdue' | 'withdraw'
@@ -95,6 +95,12 @@ const statusLabel: Record<ActivityStatus, string> = {
   overdue:  'Em atraso',
   withdraw: 'Saída',
 }
+
+const statusTone: Record<ActivityStatus, Tone> = {
+  paid:     'positive',
+  overdue:  'negative',
+  withdraw: 'neutral',
+}
 </script>
 
 <template>
@@ -118,7 +124,7 @@ const statusLabel: Record<ActivityStatus, string> = {
       <ActivityTable :groups="activity">
         <template #amount="{ entry }">
           <span>{{ entry.amount }}</span>
-          <StatusBadge :tone="entry.status" :label="statusLabel[entry.status]" />
+          <StatusBadge :tone="statusTone[entry.status]" :label="statusLabel[entry.status]" />
         </template>
 
         <template #meta="{ entry }">
@@ -139,10 +145,13 @@ const statusLabel: Record<ActivityStatus, string> = {
           <template #header>
             <img :src="client.logo" :alt="client.name" class="size-12 rounded-lg" />
             <span>{{ client.name }}</span>
-            <OverflowMenu class="ml-auto">
-              <OverflowMenuItem :to="`/clients/${client.id}`">Ver</OverflowMenuItem>
-              <OverflowMenuItem :to="`/clients/${client.id}/edit`">Editar</OverflowMenuItem>
-            </OverflowMenu>
+            <Menu class="ml-auto">
+              <template #trigger>
+                <EllipsisHorizontalIcon class="size-5" aria-hidden="true" />
+              </template>
+              <MenuItem :to="`/clients/${client.id}`">Ver</MenuItem>
+              <MenuItem :to="`/clients/${client.id}/edit`">Editar</MenuItem>
+            </Menu>
           </template>
 
           <DescriptionList>
@@ -151,7 +160,7 @@ const statusLabel: Record<ActivityStatus, string> = {
             </DescriptionListItem>
             <DescriptionListItem label="Valor">
               <span>{{ client.lastInvoice.amount }}</span>
-              <StatusBadge :tone="client.lastInvoice.status" :label="statusLabel[client.lastInvoice.status]" />
+              <StatusBadge :tone="statusTone[client.lastInvoice.status]" :label="statusLabel[client.lastInvoice.status]" />
             </DescriptionListItem>
           </DescriptionList>
         </Card>

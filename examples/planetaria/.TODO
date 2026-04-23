@@ -1,3 +1,8 @@
-Check `docs/assets/application-ui-v4/GLOSSARY.md`.
-Do a reverse engineering a create a briefing.md file, also the 3 pages specs.
-Remove this file when done.
+Reverse-engineer Planetaria from `docs/assets/application-ui-v4/vue/page-examples/*/01-sidebar.vue`.
+
+Pending screens (Vue API sketches, not runnable):
+- [x] Home        — Home.vue
+- [ ] Detail      — deployment detail (overview)
+- [ ] Settings    — account settings
+
+Later: briefing.md + per-page specs. Remove this file when all three sketches exist.
