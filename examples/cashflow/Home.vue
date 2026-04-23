@@ -54,54 +54,55 @@ type Client = {
 
 const nav: NavItem[] = [
   { label: 'Home', to: '/', current: true },
-  { label: 'Faturas', to: '/invoices' },
-  { label: 'Clientes', to: '/clients' },
-  { label: 'Despesas', to: '/expenses' },
+  { label: 'Invoices', to: '/invoices' },
+  { label: 'Clients', to: '/clients' },
+  { label: 'Expenses', to: '/expenses' },
 ]
 
 const user = { name: 'Tom Cook', avatar: '/avatars/tom.jpg' }
 
 const ranges: RangeTab[] = [
-  { label: 'Últimos 7 dias', value: '7d', current: true },
-  { label: 'Últimos 30 dias', value: '30d' },
-  { label: 'Todo o período', value: 'all' },
+  { label: 'Last 7 days', value: '7d', current: true },
+  { label: 'Last 30 days', value: '30d' },
+  { label: 'All-time', value: 'all' },
 ]
 
 const stats: Stat[] = [
-  { label: 'Receita',            value: 'R$ 405.091', delta: '+4,75%',  tone: 'positive' },
-  { label: 'Faturas em atraso',  value: 'R$ 12.787',  delta: '+54,02%', tone: 'negative' },
-  { label: 'Faturas em aberto',  value: 'R$ 245.988', delta: '-1,39%',  tone: 'positive' },
-  { label: 'Despesas',           value: 'R$ 30.156',  delta: '+10,18%', tone: 'negative' },
+  { label: 'Revenue',            value: '$405,091.00', delta: '+4.75%',  tone: 'positive' },
+  { label: 'Overdue invoices',   value: '$12,787.00',  delta: '+54.02%', tone: 'negative' },
+  { label: 'Outstanding invoices', value: '$245,988.00', delta: '-1.39%', tone: 'positive' },
+  { label: 'Expenses',           value: '$30,156.00',  delta: '+10.18%', tone: 'negative' },
 ]
 
 const activity: ActivityGroup[] = [
   {
-    label: 'Hoje',
-    datetime: '2026-04-23',
+    label: 'Today',
+    datetime: '2023-03-22',
     entries: [
-      { id: '1', kind: 'income',    amount: 'R$ 7.600',  tax: 'R$ 500',  status: 'paid',     counterparty: 'Reform',   description: 'Redesign do site', ref: '00012', href: '/invoices/00012' },
-      { id: '2', kind: 'outgoing',  amount: 'R$ 10.000',                 status: 'withdraw', counterparty: 'Tom Cook', description: 'Salário',          ref: '00011', href: '/invoices/00011' },
+      { id: '1', kind: 'income',    amount: '$7,600.00',  tax: '$500.00', status: 'paid',     counterparty: 'Reform',   description: 'Website redesign', ref: '00012', href: '/invoices/00012' },
+      { id: '2', kind: 'outgoing',  amount: '$10,000.00',                 status: 'withdraw', counterparty: 'Tom Cook', description: 'Salary',           ref: '00011', href: '/invoices/00011' },
     ],
   },
   {
-    label: 'Ontem',
-    datetime: '2026-04-22',
+    label: 'Yesterday',
+    datetime: '2023-03-21',
     entries: [
-      { id: '3', kind: 'recurring', amount: 'R$ 2.000',  tax: 'R$ 130',  status: 'overdue',  counterparty: 'Tuple',    description: 'Design de logo',   ref: '00009', href: '/invoices/00009' },
+      { id: '3', kind: 'recurring', amount: '$14,000.00', tax: '$900.00', status: 'paid',     counterparty: 'SavvyCal', description: 'Website redesign', ref: '00010', href: '/invoices/00010' },
+      { id: '4', kind: 'recurring', amount: '$2,000.00',  tax: '$130.00', status: 'overdue',  counterparty: 'Tuple',    description: 'Logo design',      ref: '00009', href: '/invoices/00009' },
     ],
   },
 ]
 
 const clients: Client[] = [
-  { id: '1', name: 'Tuple',    logo: '/logos/tuple.svg',    lastInvoice: { date: '13/12/2025', datetime: '2025-12-13', amount: 'R$ 2.000',  status: 'overdue' } },
-  { id: '2', name: 'SavvyCal', logo: '/logos/savvycal.svg', lastInvoice: { date: '22/01/2026', datetime: '2026-01-22', amount: 'R$ 14.000', status: 'paid'    } },
-  { id: '3', name: 'Reform',   logo: '/logos/reform.svg',   lastInvoice: { date: '23/01/2026', datetime: '2026-01-23', amount: 'R$ 7.600',  status: 'paid'    } },
+  { id: '1', name: 'Tuple',    logo: '/logos/tuple.svg',    lastInvoice: { date: 'December 13, 2022', datetime: '2022-12-13', amount: '$2,000.00',  status: 'overdue' } },
+  { id: '2', name: 'SavvyCal', logo: '/logos/savvycal.svg', lastInvoice: { date: 'January 22, 2023', datetime: '2023-01-22', amount: '$14,000.00', status: 'paid'    } },
+  { id: '3', name: 'Reform',   logo: '/logos/reform.svg',   lastInvoice: { date: 'January 23, 2023', datetime: '2023-01-23', amount: '$7,600.00',  status: 'paid'    } },
 ]
 
 const statusLabel: Record<ActivityStatus, string> = {
-  paid:     'Pago',
-  overdue:  'Em atraso',
-  withdraw: 'Saída',
+  paid:     'Paid',
+  overdue:  'Overdue',
+  withdraw: 'Withdraw',
 }
 
 const statusTone: Record<ActivityStatus, Tone> = {
@@ -122,21 +123,21 @@ const statusTone: Record<ActivityStatus, Tone> = {
         <NavTabs :items="ranges" />
       </template>
       <template #actions>
-        <Button variant="primary" :icon="PlusSmallIcon">Nova fatura</Button>
+        <Button variant="primary" :icon="PlusSmallIcon">New invoice</Button>
       </template>
     </PageHeading>
 
     <StatGrid :items="stats" />
 
-    <PageSection title="Atividade recente">
+    <PageSection title="Recent activity">
       <ActivityTable :groups="activity">
         <template #amount="{ entry }">
           <Stack gap="xs">
             <Cluster gap="sm">
-              <Text weight="medium">{{ entry.amount }}</Text>
+              <Text weight="medium">{{ entry.amount }} USD</Text>
               <StatusBadge :tone="statusTone[entry.status]" :label="statusLabel[entry.status]" />
             </Cluster>
-            <Text v-if="entry.tax" tone="muted" size="xs">{{ entry.tax }} imposto</Text>
+            <Text v-if="entry.tax" tone="muted" size="xs">{{ entry.tax }} tax</Text>
           </Stack>
         </template>
 
@@ -149,14 +150,14 @@ const statusTone: Record<ActivityStatus, Tone> = {
 
         <template #action="{ entry }">
           <Stack gap="xs" align="end">
-            <Link :to="entry.href">Ver<VisuallyHidden> transação</VisuallyHidden></Link>
-            <Text tone="muted" size="xs">Fatura #{{ entry.ref }}</Text>
+            <Link :to="entry.href">View<VisuallyHidden> transaction</VisuallyHidden></Link>
+            <Text tone="muted" size="xs">Invoice #{{ entry.ref }}</Text>
           </Stack>
         </template>
       </ActivityTable>
     </PageSection>
 
-    <PageSection title="Clientes recentes" action-label="Ver todos" action-href="/clients">
+    <PageSection title="Recent clients" action-label="View all" action-href="/clients">
       <Grid :cols="{ base: 1, lg: 3 }" gap="lg" tag="ul" role="list">
         <Card v-for="client in clients" :key="client.id" tag="li">
           <template #header>
@@ -171,16 +172,16 @@ const statusTone: Record<ActivityStatus, Tone> = {
               <template #trigger>
                 <Icon :src="EllipsisHorizontalIcon" size="sm" aria-hidden="true" />
               </template>
-              <MenuItem :to="`/clients/${client.id}`">Ver</MenuItem>
-              <MenuItem :to="`/clients/${client.id}/edit`">Editar</MenuItem>
+              <MenuItem :to="`/clients/${client.id}`">View</MenuItem>
+              <MenuItem :to="`/clients/${client.id}/edit`">Edit</MenuItem>
             </Menu>
           </template>
 
           <DescriptionList>
-            <DescriptionListItem label="Última fatura">
+            <DescriptionListItem label="Last invoice">
               <time :datetime="client.lastInvoice.datetime">{{ client.lastInvoice.date }}</time>
             </DescriptionListItem>
-            <DescriptionListItem label="Valor">
+            <DescriptionListItem label="Amount">
               <Cluster gap="sm" align="center">
                 <Text>{{ client.lastInvoice.amount }}</Text>
                 <StatusBadge :tone="statusTone[client.lastInvoice.status]" :label="statusLabel[client.lastInvoice.status]" />
