@@ -44,3 +44,40 @@
     --duration-slow: 0ms;
   }
 }
+
+/* Base motion — all clickable surfaces ease their feedback by default.
+   Components can override transition-* utilities locally; this just
+   ensures nothing pops when an a/button hover changes color/bg/shadow. */
+@layer base {
+  a,
+  button,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"] {
+    transition-property: color, background-color, border-color, outline-color, box-shadow, opacity, transform;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-standard);
+  }
+  button:active:not(:disabled),
+  [role="button"]:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+/* Signature gradient gentle drift — adds life without distracting.
+   Disabled via prefers-reduced-motion since duration tokens collapse. */
+@keyframes signature-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50%      { transform: translate(2%, -1%) rotate(0.5deg); }
+}
+
+.signature-blob {
+  animation: signature-drift 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signature-blob {
+    animation: none;
+  }
+}

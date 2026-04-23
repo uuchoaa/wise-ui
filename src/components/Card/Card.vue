@@ -14,7 +14,7 @@ const slots = useSlots()
 <template>
   <component
     :is="tag"
-    class="overflow-hidden rounded-xl outline outline-tone-neutral-500/15"
+    class="overflow-hidden rounded-xl outline outline-tone-neutral-500/15 transition-shadow duration-[var(--duration-normal)] ease-[var(--ease-standard)] hover:shadow-md"
   >
     <div
       v-if="slots.header || slots['header-trailing']"
