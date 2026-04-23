@@ -25,3 +25,22 @@ Currently pre-implementation. The tree is intentionally lean:
 4. **Single-user, throwaway tool.** React's ecosystem advantage (hireability, library breadth) is not load-bearing for a 12-day personal tool.
 
 Trade-off accepted: smaller ecosystem, `.value` unwrapping in `<script setup>`. Neither blocks the pilot.
+
+## Deferred to next session
+
+Punted from the current Settings + Detail sweep to keep scope honest:
+
+- **Storybook stories** for new primitives (Switch, Settings*, form primitives). API + screen first; stories later.
+- **Unit specs** for new primitives. Same reason.
+- **Mocks / fixtures** beyond what a single screen needs.
+- **Refactoring `Home.vue` / `Home.yaml`** for Cashflow and Planetaria. Only touch if a new convention breaks them.
+- **Second-target ports** (React, Rails). Tracked in `docs/targets.md`; Vue-only for now.
+
+## Session decisions (2026-04-23)
+
+Locked in to unblock the Settings + Detail sweep:
+
+- **Form stack**: VeeValidate + **Zod** (not Yup). `.schema.ts` uses Zod; type inference is nicer and the ecosystem is the one we'd reuse in a React port.
+- **Settings sub-nav**: slot `#sidenav` on `<Page>`, not a dedicated `<SettingsLayout>` component. Same shell, one slot.
+- **`SettingsRow`**: three separate components (`SettingsFieldRow`, `SettingsItemRow`, `SettingsToggleRow`) instead of one polymorphic variant. Determinism for LLM > reuse.
+- **Detail scope**: split into draft-first / schemas-second if the reference is heavy. Don't block the sweep on one tela.
