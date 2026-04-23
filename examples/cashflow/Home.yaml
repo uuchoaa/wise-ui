@@ -1,18 +1,5 @@
 # Cashflow Home — screen source of truth.
-#
-# Grammar (WIP; derives from the two existing Home.yaml files):
-#   Node keys:
-#     type                 — component (PascalCase) or native HTML tag (lowercase)
-#     slots: {name: ...}   — named slots; value is [Node] or {scope, children}
-#     children: [...]      — default-slot children (Nodes or literal strings)
-#     text: string         — default-slot text (supports interpolation)
-#     repeat: {source, as, key}  — v-for on this node
-#     if: expression       — v-if on this node
-#     <other key>: value   — passed as prop/attr to the component/tag
-#   Bindings inside values:
-#     $name, $a.b.c        — identifier / path reference
-#     ${any expression}    — full expression; also works inside strings: "foo ${x}"
-#   No binding prefix → literal value (string/number/boolean/map/array).
+# Grammar: see docs/yaml-grammar.md.
 
 name: CashflowHome
 
@@ -67,15 +54,15 @@ data:
     - id: "1"
       name: Tuple
       logo: /logos/tuple.svg
-      lastInvoice: { date: 13/12/2025, datetime: 2025-12-13, amount: "R$ 2.000",  status: overdue }
+      lastInvoice: { date: 13/12/2025, datetime: 2025-12-13, amount: "R$ 2.000",  status: overdue } # prev year → full date
     - id: "2"
       name: SavvyCal
       logo: /logos/savvycal.svg
-      lastInvoice: { date: 22/01/2026, datetime: 2026-01-22, amount: "R$ 14.000", status: paid }
+      lastInvoice: { date: 22/01,      datetime: 2026-01-22, amount: "R$ 14.000", status: paid }
     - id: "3"
       name: Reform
       logo: /logos/reform.svg
-      lastInvoice: { date: 23/01/2026, datetime: 2026-01-23, amount: "R$ 7.600",  status: paid }
+      lastInvoice: { date: 23/01,      datetime: 2026-01-23, amount: "R$ 7.600",  status: paid }
 
   statusLabel:
     paid: Pago
@@ -86,6 +73,11 @@ data:
     paid: positive
     overdue: negative
     withdraw: neutral
+
+  kindIcon:
+    income:    ArrowUpCircleIcon
+    outgoing:  ArrowDownCircleIcon
+    recurring: ArrowPathIcon
 
 root:
   type: StackedShell
@@ -112,6 +104,13 @@ root:
         - type: ActivityTable
           groups: $activity
           slots:
+
+            icon:
+              scope: entry
+              children:
+                - type: Icon
+                  src:  ${kindIcon[entry.kind]}
+                  size: md
 
             amount:
               scope: entry
