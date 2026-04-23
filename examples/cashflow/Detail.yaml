@@ -1,5 +1,9 @@
 # Cashflow Detail (invoice) — screen source of truth.
 # Grammar: see docs/yaml-grammar.md.
+#
+# Layout: Page with 2-col split on lg. Main column carries DetailHeading +
+# InvoiceDocument. Right rail carries SummaryCard + Timeline + comment composer.
+# This mirrors the Document archetype described in docs/archetypes.md.
 
 name: CashflowDetail
 
@@ -84,6 +88,86 @@ root:
   children:
 
     - type: Page
+      slots:
+
+        rail:
+
+          - type: SummaryCard
+            slots:
+              title:
+                - type: Cluster
+                  justify: between
+                  align: center
+                  children:
+                    - type: Stack
+                      gap: xs
+                      children:
+                        - { type: Text, tone: muted, size: sm, text: Valor }
+                        - { type: Text, size: base, weight: semibold, text: $invoice.amount }
+                    - type: StatusBadge
+                      tone: ${statusTone[invoice.status]}
+                      label: $invoice.statusLabel
+              footer:
+                - { type: Link, to: /invoices/00011/receipt, text: "Baixar recibo →" }
+            children:
+              - type: SummaryCardRow
+                icon: UserCircleIcon
+                label: Cliente
+                children:
+                  - $invoice.payer
+              - type: SummaryCardRow
+                icon: CalendarDaysIcon
+                label: Vencimento
+                children:
+                  - { type: time, datetime: $invoice.dueDate.datetime, text: $invoice.dueDate.date }
+              - type: SummaryCardRow
+                icon: CreditCardIcon
+                label: Pagamento
+                children:
+                  - $invoice.paymentMethod
+
+          - type: Timeline
+            items: $activity
+            slots:
+
+              event:
+                scope: item
+                children:
+                  - { type: Text, weight: medium, text: $item.person.name }
+                  - { type: Text, tone: muted, text: " ${kindLabel[item.kind]} a fatura." }
+                  - { type: time, datetime: $item.datetime, text: $item.date }
+
+              comment:
+                scope: item
+                children:
+                  - { type: Avatar, src: $item.person.avatar, alt: $item.person.name, size: sm }
+                  - type: Stack
+                    gap: xs
+                    children:
+                      - type: Cluster
+                        justify: between
+                        children:
+                          - type: Text
+                            children:
+                              - { type: Text, weight: medium, text: $item.person.name }
+                              - { type: Text, tone: muted, text: " comentou" }
+                          - { type: time, datetime: $item.datetime, text: $item.date }
+                      - { type: Text, tone: muted, text: $item.comment }
+
+          - type: form
+            children:
+              - type: Textarea
+                field: body
+                label: Adicionar comentário
+                placeholder: "Escreva um comentário..."
+                rows: 2
+              - type: Cluster
+                justify: between
+                align: center
+                children:
+                  - { type: Button, variant: ghost,     icon: PaperClipIcon, "aria-label": Anexar arquivo }
+                  - { type: Button, variant: secondary, type: submit,        text: Comentar }
+
       children:
 
         - type: DetailHeading
@@ -97,40 +181,6 @@ root:
               - { type: Button, variant: ghost,     text: Editar }
               - { type: Button, variant: primary,   text: Enviar }
 
-        - type: SummaryCard
-          slots:
-            title:
-              - type: Cluster
-                justify: between
-                align: center
-                children:
-                  - type: Stack
-                    gap: xs
-                    children:
-                      - { type: Text, tone: muted, size: sm, text: Valor }
-                      - { type: Text, size: base, weight: semibold, text: $invoice.amount }
-                  - type: StatusBadge
-                    tone: ${statusTone[invoice.status]}
-                    label: $invoice.statusLabel
-            footer:
-              - { type: Link, to: /invoices/00011/receipt, text: "Baixar recibo →" }
-          children:
-            - type: SummaryCardRow
-              icon: UserCircleIcon
-              label: Cliente
-              children:
-                - $invoice.payer
-            - type: SummaryCardRow
-              icon: CalendarDaysIcon
-              label: Vencimento
-              children:
-                - { type: time, datetime: $invoice.dueDate.datetime, text: $invoice.dueDate.date }
-            - type: SummaryCardRow
-              icon: CreditCardIcon
-              label: Pagamento
-              children:
-                - $invoice.paymentMethod
-
         - type: InvoiceDocument
           issuedOn: $invoice.issuedOn
           dueOn:    $invoice.dueDate
@@ -140,45 +190,3 @@ root:
           subtotal: $invoice.subtotal
           tax:      $invoice.tax
           total:    $invoice.total
-
-        - type: Timeline
-          items: $activity
-          slots:
-
-            event:
-              scope: item
-              children:
-                - { type: Text, weight: medium, text: $item.person.name }
-                - { type: Text, tone: muted, text: " ${kindLabel[item.kind]} a fatura." }
-                - { type: time, datetime: $item.datetime, text: $item.date }
-
-            comment:
-              scope: item
-              children:
-                - { type: Avatar, src: $item.person.avatar, alt: $item.person.name, size: sm }
-                - type: Stack
-                  gap: xs
-                  children:
-                    - type: Cluster
-                      justify: between
-                      children:
-                        - type: Text
-                          children:
-                            - { type: Text, weight: medium, text: $item.person.name }
-                            - { type: Text, tone: muted, text: " comentou" }
-                        - { type: time, datetime: $item.datetime, text: $item.date }
-                    - { type: Text, tone: muted, text: $item.comment }
-
-        - type: form
-          children:
-            - type: Textarea
-              field: body
-              label: Adicionar comentário
-              placeholder: "Escreva um comentário..."
-              rows: 2
-            - type: Cluster
-              justify: between
-              align: center
-              children:
-                - { type: Button, variant: ghost,     icon: PaperClipIcon, "aria-label": Anexar arquivo }
-                - { type: Button, variant: secondary, type: submit,        text: Comentar }
