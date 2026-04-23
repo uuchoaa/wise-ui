@@ -287,7 +287,7 @@ Prev/next pagination control for listed data (typically below a `<ResourceTable>
 | `hasPrev` | `boolean` | —       |
 | `hasNext` | `boolean` | —       |
 
-`summary` is pre-formatted by the consumer (e.g. `"1 – 10 de 42"`) — the component does not format numbers, since pt-BR/en formatting lives upstream.
+`summary` is pre-formatted by the consumer (e.g. `"1 – 10 of 42"`) — the component does not format numbers; locale-specific formatting lives upstream.
 
 Emits: `prev`, `next`. When `hasPrev`/`hasNext` is `false` the corresponding button is rendered disabled (not hidden) to keep the control's horizontal layout stable.
 

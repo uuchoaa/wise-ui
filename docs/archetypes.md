@@ -88,7 +88,7 @@ Dialects are not just about shells — they're a coherent system of choices that
 | Settings subtype       | **Sectioned-form** (always-visible)      | **Field-list** (progressive disclosure) |
 | Settings sub-nav       | `NavTabs` horizontal (inside page)       | `Page` rail with `NavGroup`             |
 | Density                | Dense lists, rail for secondary content  | Breathable sections, less chrome        |
-| Tone of primary CTAs   | Utility ("New project")                  | Transactional ("Nova fatura")           |
+| Tone of primary CTAs   | Utility ("New project")                  | Transactional ("New invoice")           |
 
 ### Why sub-nav differs by dialect
 

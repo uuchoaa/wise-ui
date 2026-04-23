@@ -34,8 +34,8 @@ On **Home**, the `Page` uses a left rail for the activity feed and reserves the 
 A project is fundamentally operational — the question "how is this resource doing?" dominates. So the detail page reads:
 
 1. **`PageHeading` with `NavTabs`** — local scope tabs (Overview / Activity / Settings / Collaborators / Notifications). Horizontal because the shell's left sidebar is already the vertical axis.
-2. **`DetailHeading`** with a `StatusDot` (leading slot), team/name composed title, description ("Deploys do GitHub via branch main"), and environment badge (actions slot). The eyebrow is implicit (team name acts as it).
-3. **`StatGrid`** — 4 operational metrics (deploys, avg time, servers, success rate). No deltas because the story here is "absolute state", not "change".
+2. **`DetailHeading`** with a `StatusDot` (leading slot), team/name composed title, description ("Deploys from GitHub via main branch"), and environment badge (actions slot). The eyebrow is implicit (team name acts as it).
+3. **`StatGrid`** — 4 operational metrics (number of deploys, average deploy time, number of servers, success rate). No deltas because the story here is "absolute state", not "change".
 4. **`ResourceTable`** with flat columns (User / Commit / Status / Duration / Deployed at). Flat, not grouped by day — the user is scanning for recent failures, not reviewing a day's work.
 
 No comments, no document body, no summary rail. That's the Document subtype, not this one.
@@ -44,16 +44,16 @@ No comments, no document body, no summary rail. That's the Document subtype, not
 
 Account settings are filled in holistically, not field by field. You open Settings to change one thing, probably, but you want to see what's set around it. So:
 
-- Horizontal `NavTabs` for sub-nav (Conta / Notificações / Faturamento / Equipes / Integrações). Not a left rail because the shell already has one.
+- Horizontal `NavTabs` for sub-nav (Account / Notifications / Billing / Teams / Integrations). Not a left rail because the shell already has one.
 - `SettingsFormSection` with always-visible inputs. Each section commits as a whole via its own `Save`.
-- Password section and "Encerrar outras sessões" are both short form sections; delete account at the end is a single-button danger section.
+- Password section and "Log out other sessions" are both short form sections; delete account at the end is a single-button danger section.
 
 Form validation lives in a side-car `.schema.ts` (VeeValidate + Zod).
 
 ## Composition conventions
 
-- **Copy** is pt-BR, even though some technical labels stay in English by preference (`main`, `deploy` — treated as loanwords). `Projetos`, `Configurações`, `Colaboradores` are translated.
-- **Time** is mostly relative (`há 45 minutos`, `há 2 dias`) with an ISO `datetime` attribute for the `<time>` element. Absolute dates only when more than a week out.
+- **Copy** is English throughout. Technical labels stay as-is (`main`, `deploy`, commit hashes).
+- **Time** is mostly relative (`45 minutes ago`, `2 days ago`) with an ISO `datetime` attribute for the `<time>` element. Absolute dates only when more than a week out.
 - **Status tones** come from the closed vocabulary: `online → positive`, `offline → neutral`, `error → negative`.
 - **Icons** from `@heroicons/vue/24/outline` (Folder, Server, Signal, GlobeAlt, ChartBarSquare, Cog6Tooth). Kept minimal in the nav — one per item, no decoration.
 
