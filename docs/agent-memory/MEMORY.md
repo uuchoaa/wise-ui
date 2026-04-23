@@ -16,3 +16,5 @@ Project-specific memory for wise-ui. User-wide preferences (language, commit pol
 - [File structure](project_file_structure.md) — colocation default; schemas live with forms (screen-level), not with DS components; full spec in docs/file-structure.md
 - [Tailwind v4 source scanning](project_tailwind_source_scanning.md) — Vite root is dev/, so styles.css must list @source for src/ and examples/ explicitly
 - [Pixel-match reference first](feedback_pixel_match_reference.md) — example screens use English copy + USD to match Tailwind Plus reference; pt-BR is a later localization pass, not the current baseline
+- [Simple git commit commands](feedback_commit_command_simple.md) — use `git commit -m "…" -m "…"` inline; never heredoc/`cat` in commit messages — those re-prompt every time
+- [One command per Bash call](feedback_one_command_per_invocation.md) — never chain with `&&`/`;`; each operation is its own Bash invocation so allowlists authorize once

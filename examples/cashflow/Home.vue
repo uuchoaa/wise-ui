@@ -26,6 +26,11 @@ import {
   type Tone,
 } from 'wise-ui'
 import { EllipsisHorizontalIcon, PlusSmallIcon } from '@heroicons/vue/20/solid'
+import {
+  ArrowDownCircleIcon,
+  ArrowPathIcon,
+  ArrowUpCircleIcon,
+} from '@heroicons/vue/24/outline'
 
 type RangeFilter = NavTabItem
 type Stat = { label: string; value: string; delta: string; tone: Tone }
@@ -110,6 +115,12 @@ const statusTone: Record<ActivityStatus, Tone> = {
   overdue:  'negative',
   withdraw: 'neutral',
 }
+
+const kindIcon: Record<ActivityKind, typeof ArrowDownCircleIcon> = {
+  income:    ArrowUpCircleIcon,
+  outgoing:  ArrowDownCircleIcon,
+  recurring: ArrowPathIcon,
+}
 </script>
 
 <template>
@@ -132,13 +143,16 @@ const statusTone: Record<ActivityStatus, Tone> = {
     <PageSection title="Recent activity">
       <ActivityTable :groups="activity">
         <template #amount="{ entry }">
-          <Stack gap="xs">
-            <Cluster gap="sm">
-              <Text weight="medium">{{ entry.amount }} USD</Text>
-              <StatusBadge :tone="statusTone[entry.status]" :label="statusLabel[entry.status]" />
-            </Cluster>
-            <Text v-if="entry.tax" tone="muted" size="xs">{{ entry.tax }} tax</Text>
-          </Stack>
+          <Cluster gap="md" align="start">
+            <Icon :src="kindIcon[entry.kind]" size="md" class="text-tone-neutral-500" aria-hidden="true" />
+            <Stack gap="xs">
+              <Cluster gap="sm">
+                <Text weight="medium">{{ entry.amount }} USD</Text>
+                <StatusBadge :tone="statusTone[entry.status]" :label="statusLabel[entry.status]" />
+              </Cluster>
+              <Text v-if="entry.tax" tone="muted" size="xs">{{ entry.tax }} tax</Text>
+            </Stack>
+          </Cluster>
         </template>
 
         <template #meta="{ entry }">
