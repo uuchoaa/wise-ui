@@ -2,7 +2,7 @@ Reverse-engineer Planetaria from `docs/assets/application-ui-v4/vue/page-example
 
 Pending screens (Vue API sketches, not runnable):
 - [x] Home        — Home.vue
-- [ ] Detail      — deployment detail (overview)
-- [ ] Settings    — account settings
+- [x] Detail      — project/deployment overview (DetailHeading, ResourceTable)
+- [x] Settings    — account settings (form-first: TextField/Select/AvatarField + VeeValidate+Zod)
 
-Later: briefing.md + per-page specs. Remove this file when all three sketches exist.
+All three sketches exist. Next: per-page specs + briefing.md.

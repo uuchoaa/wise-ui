@@ -65,7 +65,7 @@ slots:
       - { type: Text, weight: medium, text: $entry.amount }
 ```
 
-Slot names are stable across the DS. Canonical names include: `brand`, `nav`, `nav-extra`, `topbar`, `actions`, `rail`, `trigger`, `header`, `header-trailing`, `body`, `leading`, `title`, `meta`, `trailing`, `amount`, `action`. Adding a new slot name is a DS decision that goes in `docs/components.md`.
+Slot names are stable across the DS. Canonical names include: `brand`, `nav`, `nav-extra`, `topbar`, `actions`, `rail`, `sidenav`, `trigger`, `header`, `header-trailing`, `body`, `leading`, `title`, `meta`, `trailing`, `amount`, `action`, `event`, `comment`, `footer`, `prefix`, `suffix`. Adding a new slot name is a DS decision that goes in `docs/components.md`.
 
 ### Repeat
 
@@ -195,3 +195,38 @@ See `examples/cashflow/Home.yaml` and `examples/planetaria/Home.yaml`. Those two
 - Interactivity (validation, state machines, event handlers) — lives in the target-specific `<script>` layer.
 - Styling primitives beyond DS tokens — no CSS, no Tailwind, no inline styles.
 - Target-specific prop names — the grammar stays semantic.
+
+---
+
+## Forms
+
+Form wiring (validation, submit handlers) lives in the target-specific script layer — not in YAML. The grammar exposes two hints that link a screen's YAML to its colocated schema file.
+
+### `field:` on form primitives
+
+Form primitives (`TextField`, `Textarea`, `Select`, etc.) accept a `field` key — an identifier that names the form field. The translator uses it to emit `v-model:value` bindings and to thread the matching `errorMessage` from the form's error map.
+
+```yaml
+- { type: TextField, field: email, label: E-mail, type: email, required: true }
+```
+
+`field` is an identifier (not a binding). Its string value must match a key in the Zod schema referenced by the enclosing form section.
+
+### `schema:` on form sections
+
+A form section (`SettingsFormSection` today; future: any section that owns a form) accepts a `schema` key — an identifier that names the Zod schema exported from the colocated `*.schema.ts` file.
+
+```yaml
+- type: SettingsFormSection
+  title: Informações pessoais
+  submitLabel: Salvar
+  schema: personalInfoSchema
+  children:
+    - { type: TextField, field: firstName, label: Nome, required: true }
+```
+
+The translator emits `import { personalInfoSchema } from './Screen.schema'` and wires `useForm({ validationSchema: toTypedSchema(personalInfoSchema) })` in the script layer.
+
+### Target-neutrality
+
+`field` and `schema` are **semantic hints**, not framework-specific. A React target would emit `react-hook-form` + Zod wiring; a Rails target would emit a model/dry-validation binding. The identifiers survive the port; the wiring does not.

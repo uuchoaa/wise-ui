@@ -46,11 +46,12 @@ Shared types:
 
 ### `<Page>`
 
-Main content container inside a shell. Provides the scaffolding for heading, sections, and an optional right rail.
+Main content container inside a shell. Provides the scaffolding for heading, sections, an optional right rail, and an optional left sub-nav.
 
 Slots:
 - default — page sections in order.
 - `rail` — right-side aside (e.g. activity feed); renders as `<aside>` on lg+.
+- `sidenav` — left-side vertical sub-nav (e.g. `<NavGroup variant="icons">`); renders as `<aside>` on lg+. Typical use: settings screens with sub-navigation.
 
 ### `<PageHeading>`
 
@@ -122,11 +123,12 @@ Search input with a magnifying-glass icon. Emits `update:value`.
 
 ### `<Button>`
 
-| Prop       | Type                                     | Default     |
-|------------|------------------------------------------|-------------|
-| `variant`  | `primary` · `secondary` · `ghost`        | `secondary` |
-| `icon`     | icon component                           | —           |
-| `disabled` | `boolean`                                | `false`     |
+| Prop       | Type                                               | Default     |
+|------------|----------------------------------------------------|-------------|
+| `variant`  | `primary` · `secondary` · `ghost` · `danger`       | `secondary` |
+| `icon`     | icon component                                     | —           |
+| `disabled` | `boolean`                                          | `false`     |
+| `type`     | `button` · `submit` · `reset`                      | `button`    |
 
 Slots:
 - default — button label.
@@ -259,6 +261,221 @@ Slots:
 
 ---
 
+### `<ResourceTable>`
+
+Flat data table with column config + one scoped slot per column key. Use when data is tabular and columns are known ahead of time (vs. `<ResourceList>` for row-shaped lists, or `<ActivityTable>` for grouped-by-date activity).
+
+| Prop      | Type        | Default |
+|-----------|-------------|---------|
+| `title`   | `string`    | —       |
+| `columns` | `Column[]`  | —       |
+| `items`   | `T[]`       | —       |
+
+`Column = { key: string; label: string; align?: 'start' \| 'end' }`
+
+Scoped slots: one per column `key`, each receives `{ item }`. A column without a matching slot renders `item[key]` as plain text.
+
+---
+
+## Detail
+
+### `<DetailHeading>`
+
+Hero heading for detail/resource pages: `eyebrow` + `title` + optional `description`, with a leading region (logo/avatar/status dot) and trailing actions.
+
+| Prop          | Type     | Default |
+|---------------|----------|---------|
+| `eyebrow`     | `string` | —       |
+| `title`       | `string` | —       |
+| `description` | `string` | —       |
+
+Slots:
+- `leading` — left-side element (`<Logo>`, `<Avatar>`, `<StatusDot>`).
+- `title` — overrides the `title` prop for compound titles (e.g. `<Text>Planetaria</Text><Text tone="muted"> / </Text><Text>mobile-api</Text>`). When provided, `title` prop is ignored.
+- `actions` — right-side buttons, badges, or menus.
+
+### `<SummaryCard>`
+
+Opinionated summary panel: a title block, a stack of labeled rows, and an optional footer (usually a link).
+
+Slots:
+- `title` — top block (e.g. amount + status).
+- default — `<SummaryCardRow>` children.
+- `footer` — bottom link/action.
+
+### `<SummaryCardRow>`
+
+| Prop    | Type            | Default |
+|---------|-----------------|---------|
+| `icon`  | icon component  | —       |
+| `label` | `string`        | —       |
+
+Slots:
+- default — the value content.
+
+### `<Timeline>`
+
+Vertical timeline of events with two item shapes (simple event line vs. comment card). The component routes per item based on `item.kind === 'commented'`; consumers provide both slots.
+
+| Prop    | Type  | Default |
+|---------|-------|---------|
+| `items` | `T[]` | —       |
+
+Scoped slots (both receive `{ item }`):
+- `event` — single-line event row (`<Text>person</Text> <Text>action</Text> <time>`).
+- `comment` — comment card (avatar + body).
+
+`item` must expose `kind` (`'commented'` selects `#comment`, anything else selects `#event`) and `id`. Other shape is consumer-defined.
+
+---
+
+## Settings
+
+### `<SettingsSection>`
+
+Titled settings section with divided rows and an optional actions row at the bottom.
+
+| Prop          | Type     | Default |
+|---------------|----------|---------|
+| `title`       | `string` | —       |
+| `description` | `string` | —       |
+
+Slots:
+- default — row children (`<SettingsFieldRow>`, `<SettingsItemRow>`, `<SettingsToggleRow>`).
+- `actions` — bottom action row (e.g. `<Button variant="ghost" icon="..">Adicionar outro ...</Button>`).
+
+### `<SettingsFieldRow>`
+
+Display-first field: label on the left, current value on the right, action button (e.g. "Atualizar") at the end.
+
+| Prop          | Type      | Default |
+|---------------|-----------|---------|
+| `label`       | `string`  | —       |
+| `value`       | `string`  | —       |
+| `actionLabel` | `string`  | —       |
+| `disabled`    | `boolean` | `false` |
+
+Emits: `action`.
+
+Slots:
+- default — overrides `value` for rich content.
+
+### `<SettingsItemRow>`
+
+List-item row for things like bank accounts, integrations.
+
+| Prop          | Type             | Default |
+|---------------|------------------|---------|
+| `icon`        | icon component   | —       |
+| `title`       | `string`         | —       |
+| `description` | `string`         | —       |
+| `actionLabel` | `string`         | —       |
+| `disabled`    | `boolean`        | `false` |
+
+Emits: `action`.
+
+### `<SettingsToggleRow>`
+
+Label + optional description + trailing `<Switch>`.
+
+| Prop          | Type      | Default |
+|---------------|-----------|---------|
+| `label`       | `string`  | —       |
+| `description` | `string`  | —       |
+| `checked`     | `boolean` | —       |
+| `disabled`    | `boolean` | `false` |
+
+Emits: `update:checked`.
+
+### `<SettingsFormSection>`
+
+Form-first settings section: 2-column layout (title/description on the left, form fields + submit on the right).
+
+| Prop            | Type                       | Default   |
+|-----------------|----------------------------|-----------|
+| `title`         | `string`                   | —         |
+| `description`   | `string`                   | —         |
+| `submitLabel`   | `string`                   | —         |
+| `submitVariant` | `primary` · `danger`       | `primary` |
+
+Slots:
+- default — form fields (`<TextField>`, `<Select>`, `<AvatarField>`, etc.).
+
+Emits: `submit`. The parent wires validation via VeeValidate + Zod — the schema lives with the screen (`./Screen.schema.ts`). When the default slot contains no fields, `submitLabel` is not rendered (e.g. a danger "Delete account" button placed as a child handles its own action).
+
+---
+
+## Form primitives
+
+Presentational inputs. Props are uniform: `value` / `label` / `description?` / `error?` / `errorMessage?` / `disabled?` / `required?` / `autocomplete?`. Emits: `update:value`, `blur`. Validation is not performed by these components — schemas live with the owning form (screen), wired via VeeValidate.
+
+### `<TextField>`
+
+| Prop       | Type                                                | Default |
+|------------|-----------------------------------------------------|---------|
+| `type`     | `text` · `email` · `password` · `url` · `tel`       | `text`  |
+| `label`    | `string`                                            | —       |
+| `value`    | `string`                                            | —       |
+
+Slots:
+- `prefix` — inline leading content (e.g. `<Text tone="muted">planetaria.io/</Text>`).
+- `suffix` — inline trailing content.
+
+### `<Textarea>`
+
+| Prop     | Type      | Default |
+|----------|-----------|---------|
+| `label`  | `string`  | —       |
+| `value`  | `string`  | —       |
+| `rows`   | `number`  | `3`     |
+
+### `<Select>`
+
+| Prop      | Type              | Default |
+|-----------|-------------------|---------|
+| `label`   | `string`          | —       |
+| `value`   | `string`          | —       |
+| `options` | `SelectOption[]`  | —       |
+
+`SelectOption = { value: string; label: string }`. Options-as-prop (not slot-of-`<option>`) for LLM determinism.
+
+### `<AvatarField>`
+
+Avatar + "Change" button + hint text. Used in profile/personal-info forms.
+
+| Prop          | Type     | Default |
+|---------------|----------|---------|
+| `src`         | `string` | —       |
+| `alt`         | `string` | —       |
+| `hint`        | `string` | —       |
+| `actionLabel` | `string` | —       |
+
+Emits: `change` (file).
+
+### `<Switch>`
+
+Toggle primitive.
+
+| Prop       | Type               | Default |
+|------------|--------------------|---------|
+| `label`    | `string`           | —       |
+| `checked`  | `boolean`          | —       |
+| `size`     | `sm` · `md`        | `md`    |
+| `disabled` | `boolean`          | `false` |
+
+Emits: `update:checked`. Motion: thumb translates with `Duration.fast` / `Easing.standard`; `prefers-reduced-motion` collapses the transition to 0.
+
+### `<Fieldset>`, `<Label>`, `<HelperText>`, `<ErrorMessage>`
+
+Public but mostly internal — composed by the fields above.
+
+- `<Fieldset>` — semantic group wrapper; slots `legend` + default. Use to group related fields (e.g. a radio group). Not required in the `<SettingsFormSection>` shape.
+- `<Label>` — rendered inside form primitives; consumed via the `label` prop. Direct use is rare.
+- `<HelperText>` — rendered from the `description` prop on form primitives.
+- `<ErrorMessage>` — rendered from `errorMessage` on form primitives.
+
+---
+
 ## Coverage
 
-Every component imported by `examples/cashflow/Home.vue` and `examples/planetaria/Home.vue` is documented above. When a Home screen introduces a new component or a new prop/slot on an existing one, this doc updates in the same PR.
+Every component imported by `examples/{cashflow,planetaria}/{Home,Settings,Detail}.vue` is documented above. When a new screen introduces a new component or new prop/slot on an existing one, this doc updates in the same PR.
