@@ -17,17 +17,22 @@ const deltaClass: Record<Tone, string> = {
 </script>
 
 <template>
-  <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <dl class="grid grid-cols-1 bg-white sm:grid-cols-2 lg:grid-cols-4 lg:divide-x divide-tone-neutral-500/10 border-y border-tone-neutral-500/10">
     <div
       v-for="stat in items"
       :key="stat.label"
-      class="flex flex-col gap-1 rounded-lg bg-white px-4 py-5 ring-1 ring-inset ring-tone-neutral-500/10"
+      class="relative isolate overflow-hidden px-6 py-5"
     >
-      <dt class="text-sm font-medium text-tone-neutral-500">{{ stat.label }}</dt>
-      <dd class="flex items-baseline justify-between gap-2">
-        <span class="text-2xl font-semibold text-tone-neutral-700">{{ stat.value }}</span>
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute -right-16 -bottom-20 -z-10 h-56 w-56 rounded-full opacity-70"
+        style="background: radial-gradient(closest-side, oklch(0.92 0.09 15), transparent 70%);"
+      />
+      <div class="flex items-baseline justify-between gap-2">
+        <dt class="text-sm font-medium text-tone-neutral-500">{{ stat.label }}</dt>
         <span :class="['text-sm font-medium', deltaClass[stat.tone]]">{{ stat.delta }}</span>
-      </dd>
+      </div>
+      <dd class="mt-2 text-3xl font-semibold tracking-tight text-tone-neutral-700">{{ stat.value }}</dd>
     </div>
   </dl>
 </template>
