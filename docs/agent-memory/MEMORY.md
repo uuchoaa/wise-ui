@@ -14,3 +14,4 @@ Project-specific memory for wise-ui. User-wide preferences (language, commit pol
 - [Foundation v1 baseline](project_foundation_v1.md) — v1 closed 2026-04-23; pinned docs in docs/ + two Home conformance screens; changes are deliberate
 - [Current phase](project_current_phase.md) — 4 archetypes × 2 apps drafted; src/ empty; next = implement DS / build translator / add 5th archetype
 - [File structure](project_file_structure.md) — colocation default; schemas live with forms (screen-level), not with DS components; full spec in docs/file-structure.md
+- [Tailwind v4 source scanning](project_tailwind_source_scanning.md) — Vite root is dev/, so styles.css must list @source for src/ and examples/ explicitly
