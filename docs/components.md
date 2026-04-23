@@ -275,6 +275,22 @@ Flat data table with column config + one scoped slot per column key. Use when da
 
 Scoped slots: one per column `key`, each receives `{ item }`. A column without a matching slot renders `item[key]` as plain text.
 
+Convention for trailing row actions: add a column with `key: "actions"`, `label: ""`, `align: "end"`, and provide the matching scoped slot (typically a `<Link>` or `<Menu>`). No dedicated "actions" prop — the scoped-slot mechanism already covers it.
+
+### `<Pagination>`
+
+Prev/next pagination control for listed data (typically below a `<ResourceTable>` or `<ResourceList>`). Stateless — the consumer owns page state.
+
+| Prop      | Type      | Default |
+|-----------|-----------|---------|
+| `summary` | `string`  | —       |
+| `hasPrev` | `boolean` | —       |
+| `hasNext` | `boolean` | —       |
+
+`summary` is pre-formatted by the consumer (e.g. `"1 – 10 de 42"`) — the component does not format numbers, since pt-BR/en formatting lives upstream.
+
+Emits: `prev`, `next`. When `hasPrev`/`hasNext` is `false` the corresponding button is rendered disabled (not hidden) to keep the control's horizontal layout stable.
+
 ---
 
 ## Detail
@@ -478,4 +494,4 @@ Public but mostly internal — composed by the fields above.
 
 ## Coverage
 
-Every component imported by `examples/{cashflow,planetaria}/{Home,Settings,Detail}.vue` is documented above. When a new screen introduces a new component or new prop/slot on an existing one, this doc updates in the same PR.
+Every component imported by `examples/{cashflow,planetaria}/{Home,Index,Detail,Settings}.vue` is documented above. When a new screen introduces a new component or new prop/slot on an existing one, this doc updates in the same PR.
