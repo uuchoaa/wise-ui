@@ -1,23 +1,10 @@
 <script setup lang="ts">
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
 import {
   SidebarShell,
-  Page,
-  PageHeading,
   NavGroup,
-  NavTabs,
   SearchField,
-  SettingsFormSection,
-  TextField,
-  Select,
-  AvatarField,
-  Button,
-  Text,
-  Logo,
   type NavItem,
   type NavGroupItem,
-  type NavTabItem,
 } from 'wise-ui'
 import {
   ChartBarSquareIcon,
@@ -27,205 +14,373 @@ import {
   ServerIcon,
   SignalIcon,
 } from '@heroicons/vue/24/outline'
-import {
-  personalInfoSchema,
-  changePasswordSchema,
-  logoutOthersSchema,
-} from './Settings.schema'
-
-type TeamItem = NavGroupItem
-type NavTab = NavTabItem
-type SelectOption = { value: string; label: string }
+import { ChevronDownIcon } from '@heroicons/vue/16/solid'
 
 const nav: NavItem[] = [
-  { label: 'Projetos',      to: '/projects',    icon: FolderIcon },
-  { label: 'Deploys',       to: '/deployments', icon: ServerIcon },
-  { label: 'Atividade',     to: '/activity',    icon: SignalIcon },
-  { label: 'Domínios',      to: '/domains',     icon: GlobeAltIcon },
-  { label: 'Uso',           to: '/usage',       icon: ChartBarSquareIcon },
-  { label: 'Configurações', to: '/settings',    icon: Cog6ToothIcon, current: true },
+  { label: 'Projects',    to: '#', icon: FolderIcon },
+  { label: 'Deployments', to: '#', icon: ServerIcon },
+  { label: 'Activity',    to: '#', icon: SignalIcon },
+  { label: 'Domains',     to: '#', icon: GlobeAltIcon },
+  { label: 'Usage',       to: '#', icon: ChartBarSquareIcon },
+  { label: 'Settings',    to: '#', icon: Cog6ToothIcon, current: true },
 ]
 
-const teams: TeamItem[] = [
-  { label: 'Planetaria',    to: '/teams/planetaria',    initial: 'P' },
-  { label: 'Protocol',      to: '/teams/protocol',      initial: 'P' },
-  { label: 'Tailwind Labs', to: '/teams/tailwind-labs', initial: 'T' },
+const teams: NavGroupItem[] = [
+  { label: 'Planetaria',    to: '#', initial: 'P' },
+  { label: 'Protocol',      to: '#', initial: 'P' },
+  { label: 'Tailwind Labs', to: '#', initial: 'T' },
 ]
 
-const user = { name: 'Tom Cook', avatar: '/avatars/tom.jpg' }
+const user = {
+  name: 'Tom Cook',
+  avatar:
+    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+}
 
-const settingsTabs: NavTab[] = [
-  { label: 'Conta',         value: 'account',       current: true },
-  { label: 'Notificações',  value: 'notifications' },
-  { label: 'Faturamento',   value: 'billing' },
-  { label: 'Equipes',       value: 'teams' },
-  { label: 'Integrações',   value: 'integrations' },
+const secondaryNavigation = [
+  { name: 'Account',       href: '#', current: true  },
+  { name: 'Notifications', href: '#', current: false },
+  { name: 'Billing',       href: '#', current: false },
+  { name: 'Teams',         href: '#', current: false },
+  { name: 'Integrations',  href: '#', current: false },
 ]
-
-const timezones: SelectOption[] = [
-  { value: 'America/Sao_Paulo', label: 'São Paulo (BRT)' },
-  { value: 'America/New_York',  label: 'Nova York (EST)' },
-  { value: 'Europe/London',     label: 'Londres (GMT)' },
-]
-
-const personal = useForm({
-  validationSchema: toTypedSchema(personalInfoSchema),
-  initialValues: {
-    firstName: 'Tom',
-    lastName: 'Cook',
-    email: 'tom.cook@planetaria.io',
-    username: 'tomcook',
-    timezone: 'America/Sao_Paulo',
-  },
-})
-const [firstName] = personal.defineField('firstName')
-const [lastName] = personal.defineField('lastName')
-const [email] = personal.defineField('email')
-const [username] = personal.defineField('username')
-const [timezone] = personal.defineField('timezone')
-const savePersonal = personal.handleSubmit(() => {})
-
-const password = useForm({ validationSchema: toTypedSchema(changePasswordSchema) })
-const [currentPassword] = password.defineField('currentPassword')
-const [newPassword] = password.defineField('newPassword')
-const [confirmPassword] = password.defineField('confirmPassword')
-const savePassword = password.handleSubmit(() => {})
-
-const logoutOthers = useForm({ validationSchema: toTypedSchema(logoutOthersSchema) })
-const [logoutPassword] = logoutOthers.defineField('password')
-const submitLogoutOthers = logoutOthers.handleSubmit(() => {})
-
-const deleteAccount = () => {}
 </script>
 
 <template>
   <SidebarShell :nav="nav" :user="user">
     <template #brand>
-      <Logo src="/logo.svg" alt="Planetaria" size="lg" />
+      <img
+        class="h-8 w-auto"
+        src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+        alt="Your Company"
+      />
     </template>
 
     <template #nav-extra>
-      <NavGroup title="Suas equipes" :items="teams" variant="initials" />
+      <NavGroup title="Your teams" :items="teams" variant="initials" />
     </template>
 
     <template #topbar>
-      <SearchField placeholder="Buscar" />
+      <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+        <SearchField placeholder="Search" variant="bare" />
+      </div>
     </template>
 
-    <Page>
-      <PageHeading title="Configurações da conta">
-        <template #nav>
-          <NavTabs :items="settingsTabs" />
-        </template>
-      </PageHeading>
+    <h1 class="sr-only">Account Settings</h1>
 
-      <SettingsFormSection
-        title="Informações pessoais"
-        description="Use um endereço de e-mail onde você possa receber mensagens."
-        submit-label="Salvar"
-        @submit="savePersonal"
-      >
-        <AvatarField
-          :src="user.avatar"
-          :alt="user.name"
-          hint="JPG, GIF ou PNG. Máximo 1 MB."
-          action-label="Alterar avatar"
-          @change="() => {}"
-        />
-        <TextField
-          v-model:value="firstName"
-          label="Nome"
-          autocomplete="given-name"
-          :error-message="personal.errors.value.firstName"
-          required
-        />
-        <TextField
-          v-model:value="lastName"
-          label="Sobrenome"
-          autocomplete="family-name"
-          :error-message="personal.errors.value.lastName"
-          required
-        />
-        <TextField
-          v-model:value="email"
-          type="email"
-          label="E-mail"
-          autocomplete="email"
-          :error-message="personal.errors.value.email"
-          required
-        />
-        <TextField
-          v-model:value="username"
-          label="Nome de usuário"
-          :error-message="personal.errors.value.username"
-          required
+    <header class="border-b border-tone-neutral-500/15">
+      <nav class="flex overflow-x-auto py-4">
+        <ul
+          role="list"
+          class="flex min-w-full flex-none gap-x-6 px-4 text-sm/6 font-semibold text-tone-neutral-500 sm:px-6 lg:px-8"
         >
-          <template #prefix>
-            <Text tone="muted">planetaria.io/</Text>
-          </template>
-        </TextField>
-        <Select
-          v-model:value="timezone"
-          label="Fuso horário"
-          :options="timezones"
-          :error-message="personal.errors.value.timezone"
-        />
-      </SettingsFormSection>
+          <li v-for="item in secondaryNavigation" :key="item.name">
+            <a
+              :href="item.href"
+              :class="item.current ? 'text-tone-accent-700' : ''"
+            >
+              {{ item.name }}
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
 
-      <SettingsFormSection
-        title="Alterar senha"
-        description="Atualize a senha associada à sua conta."
-        submit-label="Salvar"
-        @submit="savePassword"
+    <div class="divide-y divide-tone-neutral-500/15">
+      <div
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
       >
-        <TextField
-          v-model:value="currentPassword"
-          type="password"
-          label="Senha atual"
-          autocomplete="current-password"
-          :error-message="password.errors.value.currentPassword"
-          required
-        />
-        <TextField
-          v-model:value="newPassword"
-          type="password"
-          label="Nova senha"
-          autocomplete="new-password"
-          :error-message="password.errors.value.newPassword"
-          required
-        />
-        <TextField
-          v-model:value="confirmPassword"
-          type="password"
-          label="Confirmar nova senha"
-          autocomplete="new-password"
-          :error-message="password.errors.value.confirmPassword"
-          required
-        />
-      </SettingsFormSection>
+        <div>
+          <h2 class="text-base/7 font-semibold text-tone-neutral-700">
+            Personal Information
+          </h2>
+          <p class="mt-1 text-sm/6 text-tone-neutral-500">
+            Use a permanent address where you can receive mail.
+          </p>
+        </div>
 
-      <SettingsFormSection
-        title="Encerrar outras sessões"
-        description="Digite sua senha para encerrar outras sessões em todos os seus dispositivos."
-        submit-label="Encerrar sessões"
-        @submit="submitLogoutOthers"
-      >
-        <TextField
-          v-model:value="logoutPassword"
-          type="password"
-          label="Sua senha"
-          autocomplete="current-password"
-          :error-message="logoutOthers.errors.value.password"
-          required
-        />
-      </SettingsFormSection>
+        <form class="md:col-span-2">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+            <div class="col-span-full flex items-center gap-x-8">
+              <img
+                :src="user.avatar"
+                alt=""
+                class="size-24 flex-none rounded-lg bg-tone-neutral-50 object-cover outline -outline-offset-1 outline-black/5"
+              />
+              <div>
+                <button
+                  type="button"
+                  class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-tone-neutral-700 shadow-xs inset-ring-1 inset-ring-tone-neutral-500/30 hover:bg-tone-neutral-50"
+                >
+                  Change avatar
+                </button>
+                <p class="mt-2 text-xs/5 text-tone-neutral-500">
+                  JPG, GIF or PNG. 1MB max.
+                </p>
+              </div>
+            </div>
 
-      <SettingsFormSection
-        title="Excluir conta"
-        description="Não deseja mais usar o serviço? Você pode excluir sua conta aqui. Esta ação é irreversível e apaga permanentemente todos os dados associados."
+            <div class="sm:col-span-3">
+              <label
+                for="first-name"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                First name
+              </label>
+              <div class="mt-2">
+                <input
+                  type="text"
+                  id="first-name"
+                  name="first-name"
+                  autocomplete="given-name"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
+            <div class="sm:col-span-3">
+              <label
+                for="last-name"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Last name
+              </label>
+              <div class="mt-2">
+                <input
+                  type="text"
+                  id="last-name"
+                  name="last-name"
+                  autocomplete="family-name"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
+            <div class="col-span-full">
+              <label
+                for="email"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Email address
+              </label>
+              <div class="mt-2">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  autocomplete="email"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
+            <div class="col-span-full">
+              <label
+                for="username"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Username
+              </label>
+              <div class="mt-2">
+                <div
+                  class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-tone-neutral-500/30 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-tone-accent-700 sm:text-sm/6"
+                >
+                  <div
+                    class="shrink-0 text-base text-tone-neutral-500 select-none sm:text-sm/6"
+                  >
+                    example.com/
+                  </div>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="janesmith"
+                    class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-tone-neutral-700 placeholder:text-tone-neutral-500 focus:outline-none sm:text-sm/6"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-span-full">
+              <label
+                for="timezone"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Timezone
+              </label>
+              <div class="mt-2 grid grid-cols-1">
+                <select
+                  id="timezone"
+                  name="timezone"
+                  class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                >
+                  <option>Pacific Standard Time</option>
+                  <option>Eastern Standard Time</option>
+                  <option>Greenwich Mean Time</option>
+                </select>
+                <ChevronDownIcon
+                  class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-tone-neutral-500 sm:size-4"
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex">
+            <button
+              type="submit"
+              class="rounded-md bg-tone-accent-700 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-tone-accent-500"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
       >
-        <Button variant="danger" @click="deleteAccount">Sim, excluir minha conta</Button>
-      </SettingsFormSection>
-    </Page>
+        <div>
+          <h2 class="text-base/7 font-semibold text-tone-neutral-700">Change password</h2>
+          <p class="mt-1 text-sm/6 text-tone-neutral-500">
+            Update your password associated with your account.
+          </p>
+        </div>
+
+        <form class="md:col-span-2">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+            <div class="col-span-full">
+              <label
+                for="current-password"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Current password
+              </label>
+              <div class="mt-2">
+                <input
+                  type="password"
+                  id="current-password"
+                  name="current_password"
+                  autocomplete="current-password"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
+            <div class="col-span-full">
+              <label
+                for="new-password"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                New password
+              </label>
+              <div class="mt-2">
+                <input
+                  type="password"
+                  id="new-password"
+                  name="new_password"
+                  autocomplete="new-password"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
+            <div class="col-span-full">
+              <label
+                for="confirm-password"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Confirm password
+              </label>
+              <div class="mt-2">
+                <input
+                  type="password"
+                  id="confirm-password"
+                  name="confirm_password"
+                  autocomplete="new-password"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex">
+            <button
+              type="submit"
+              class="rounded-md bg-tone-accent-700 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-tone-accent-500"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
+      >
+        <div>
+          <h2 class="text-base/7 font-semibold text-tone-neutral-700">
+            Log out other sessions
+          </h2>
+          <p class="mt-1 text-sm/6 text-tone-neutral-500">
+            Please enter your password to confirm you would like to log out of your other
+            sessions across all of your devices.
+          </p>
+        </div>
+
+        <form class="md:col-span-2">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+            <div class="col-span-full">
+              <label
+                for="logout-password"
+                class="block text-sm/6 font-medium text-tone-neutral-700"
+              >
+                Your password
+              </label>
+              <div class="mt-2">
+                <input
+                  type="password"
+                  id="logout-password"
+                  name="password"
+                  autocomplete="current-password"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-tone-neutral-700 outline-1 -outline-offset-1 outline-tone-neutral-500/30 placeholder:text-tone-neutral-500 focus:outline-2 focus:-outline-offset-2 focus:outline-tone-accent-700 sm:text-sm/6"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex">
+            <button
+              type="submit"
+              class="rounded-md bg-tone-accent-700 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-tone-accent-500"
+            >
+              Log out other sessions
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
+      >
+        <div>
+          <h2 class="text-base/7 font-semibold text-tone-neutral-700">Delete account</h2>
+          <p class="mt-1 text-sm/6 text-tone-neutral-500">
+            No longer want to use our service? You can delete your account here. This
+            action is not reversible. All information related to this account will be
+            deleted permanently.
+          </p>
+        </div>
+
+        <form class="flex items-start md:col-span-2">
+          <button
+            type="submit"
+            class="rounded-md bg-tone-negative-500 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-tone-negative-700"
+          >
+            Yes, delete my account
+          </button>
+        </form>
+      </div>
+    </div>
   </SidebarShell>
 </template>
