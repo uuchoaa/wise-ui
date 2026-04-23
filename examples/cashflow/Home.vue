@@ -8,6 +8,7 @@ import {
   StatGrid,
   StatusBadge,
   ActivityTable,
+  BrandMark,
   Card,
   DescriptionList,
   DescriptionListItem,
@@ -50,10 +51,12 @@ type ActivityEntry = {
 }
 type ActivityGroup = { label: string; datetime: string; entries: ActivityEntry[] }
 
+type BrandColor = 'indigo' | 'rose' | 'amber' | 'emerald' | 'slate' | 'sky' | 'purple' | 'fuchsia'
+
 type Client = {
   id: string
   name: string
-  logo: string
+  brand: BrandColor
   lastInvoice: { date: string; datetime: string; amount: string; status: ActivityStatus }
 }
 
@@ -99,9 +102,9 @@ const activity: ActivityGroup[] = [
 ]
 
 const clients: Client[] = [
-  { id: '1', name: 'Tuple',    logo: '/logos/tuple.svg',    lastInvoice: { date: 'December 13, 2022', datetime: '2022-12-13', amount: '$2,000.00',  status: 'overdue' } },
-  { id: '2', name: 'SavvyCal', logo: '/logos/savvycal.svg', lastInvoice: { date: 'January 22, 2023', datetime: '2023-01-22', amount: '$14,000.00', status: 'paid'    } },
-  { id: '3', name: 'Reform',   logo: '/logos/reform.svg',   lastInvoice: { date: 'January 23, 2023', datetime: '2023-01-23', amount: '$7,600.00',  status: 'paid'    } },
+  { id: '1', name: 'Tuple',    brand: 'indigo', lastInvoice: { date: 'December 13, 2022', datetime: '2022-12-13', amount: '$2,000.00',  status: 'overdue' } },
+  { id: '2', name: 'SavvyCal', brand: 'amber',  lastInvoice: { date: 'January 22, 2023', datetime: '2023-01-22', amount: '$14,000.00', status: 'paid'    } },
+  { id: '3', name: 'Reform',   brand: 'slate',  lastInvoice: { date: 'January 23, 2023', datetime: '2023-01-23', amount: '$7,600.00',  status: 'paid'    } },
 ]
 
 const statusLabel: Record<ActivityStatus, string> = {
@@ -176,7 +179,7 @@ const kindIcon: Record<ActivityKind, typeof ArrowDownCircleIcon> = {
         <Card v-for="client in clients" :key="client.id" tag="li">
           <template #header>
             <Cluster gap="md" align="center">
-              <Logo :src="client.logo" :alt="client.name" size="xl" />
+              <BrandMark :name="client.name" :color="client.brand" size="md" />
               <Text weight="medium">{{ client.name }}</Text>
             </Cluster>
           </template>
